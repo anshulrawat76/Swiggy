@@ -13,7 +13,7 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             email=self.normalize_email(email),
-            # date_of_birth=None,
+            # date_of_birth=date_of_birth,
         )
 
         user.set_password(password)
@@ -41,33 +41,34 @@ class MyUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    first_name = models.CharField(max_length=15,null=True,blank=True)
-    last_name  = models.CharField(max_length=15,null=True,blank=True)
-    date_of_birth = models.DateField(null=True,blank=True)
-    mobile_number = models.IntegerField(null=True,blank=True)
-    otp = models.IntegerField(max_length=6,null=True,blank=True)
-    otp_verify = models.BooleanField(default=True,null=True,blank=True)
-    otp_expire = models.DateTimeField(null=True,blank=True)
-    USER_TYPE = (
+    mobile_number = models.IntegerField(max_length=10, null= True)
+    otp = models.IntegerField(max_length=6, null= True)
+    otp_verify = models.BooleanField(default=False)
+    otp_expire = models.DateTimeField(null=True , blank=True)
+    first_name = models.CharField(max_length=18 , null=True , blank=True)
+    last_name  = models.CharField(max_length=15 , null=True , blank=True)
+    date_of_birth = models.DateField(null=True ,blank=True)
+    is_active = models.BooleanField(default=True)
+    is_admin= models.BooleanField(default=False)
+
+
+    USER_TYPES = (
         (1,'Customer'),
         (2,'Driver'),
         (3,'Restaurant'),
     )
-    USER_TYPE= models.IntegerField(
-        choices = USER_TYPE,
-        default=1
+    user_types = models.IntegerField(
+        choices =  USER_TYPES,
+        default = 1
+    
     )
-    
-    
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    
+
+
 
     objects = MyUserManager()
 
     USERNAME_FIELD = "email"
-   
-    
+    # REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
         return self.email
@@ -87,5 +88,3 @@ class MyUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-    
-    
